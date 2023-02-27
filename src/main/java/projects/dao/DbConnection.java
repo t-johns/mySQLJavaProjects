@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import projects.exception.DbException;
 
 public class DbConnection { //default connection class
-  private static String HOST = "localhost";
+  private static String HOST = "projects"; // CHANGED FROM localhost !!!
   private static String PASSWORD = "projects";
   private static int PORT = 3306;
   private static String SCHEMA = "projects";
