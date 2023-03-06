@@ -11,7 +11,7 @@ import java.util.List;
  * @author Promineo
  *
  */
-public class Project {
+public class Project { // Create a complete Project object
   private Integer projectId;
   private String projectName;
   private BigDecimal estimatedHours;
@@ -84,7 +84,7 @@ public class Project {
   }
 
   @Override
-  public String toString() {
+  public String toString() { 
     String result = "";
     
     result += "\n   ID=" + projectId;
