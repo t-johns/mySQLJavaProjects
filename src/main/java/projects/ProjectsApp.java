@@ -11,10 +11,13 @@ import projects.service.ProjectService;
 public class ProjectsApp { // Menu Driven Application to Insert (Create) new Projects into mySQL DB
   private Scanner scanner = new Scanner(System.in); //scanner for input
   private ProjectService projectService = new ProjectService(); // ProjectService for data layer
+  private Project curProject;
 
   // @formatter:off
   private List<String> operations = List.of( // list of operations to choose
-      "1) Add a project"
+      "1) Add a project",
+      "2) List projects",
+      "3) Select a project"
       );
   // @formatter:on
 
@@ -39,6 +42,12 @@ public class ProjectsApp { // Menu Driven Application to Insert (Create) new Pro
           case 1:
             createProject(); // create and Insert Project object into DB
             break;
+          case 2:
+            listProjects();
+            break;
+          case 3:
+            selectProject();
+            break;
 
           default:
             System.out.println(
@@ -51,6 +60,29 @@ public class ProjectsApp { // Menu Driven Application to Insert (Create) new Pro
     }
 
   }
+
+  private void selectProject() {
+    listProjects();
+    Integer projectId = getIntInput("Enter a project ID to select a project");
+    curProject = null; // unselect project
+    
+    curProject = projectService.fetchProjectById(projectId);
+    if (curProject == null) {
+      System.out.println("Invalid project ID Selected");
+    }
+    
+  }
+
+
+  private void listProjects() {
+    List<Project> projects = projectService.fetchAllProjects();
+    System.out.println("\nProjects:");
+    
+    projects.forEach(project -> System.out.println(
+        "   " + project.getProjectId() 
+        + ": " + project.getProjectName()));    
+  }
+
 
   private int getUserSelection() { // Main Prompt
     printOperations();
@@ -117,6 +149,11 @@ public class ProjectsApp { // Menu Driven Application to Insert (Create) new Pro
 
     operations.forEach(line -> System.out.println("   " + line)); // for each line in operations List<String>
                                                                   // value, add space + line Lambda for indent
+    if (curProject == null) {
+      System.out.println("\nYou are not working with a project.");
+    } else {
+      System.out.println("\nYou are currently working with project: " + curProject);
+    }
   }
 
   private Integer getIntInput(String prompt) {
