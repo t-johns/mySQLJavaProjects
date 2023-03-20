@@ -5,6 +5,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import projects.dao.ProjectDao;
 import projects.entity.Project;
+import projects.exception.DbException;
 
 public class ProjectService { // project data Service layer
   private ProjectDao projectDao = new ProjectDao(); // project Data access object
@@ -28,4 +29,19 @@ public class ProjectService { // project data Service layer
 
   }
 
-}
+  public void modifyProjectDetails(Project project) {
+      if(!projectDao.modifyProjectDetails(project)) {
+        throw new DbException("Project with ID=" + project.getProjectId() + " does not exist.");
+        
+      }
+    }
+
+  public void deleteProject(Integer delProject) {
+    if(!projectDao.deleteProject(delProject)) {
+      throw new DbException("Oops, project does not exist.");
+    }
+    
+  }
+  }
+
+

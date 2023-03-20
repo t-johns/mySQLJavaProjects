@@ -1,6 +1,3 @@
-/**
- * 
- */
 package provided.util;
 
 import java.lang.reflect.Constructor;

@@ -17,7 +17,9 @@ public class ProjectsApp { // Menu Driven Application to Insert (Create) new Pro
   private List<String> operations = List.of( // list of operations to choose
       "1) Add a project",
       "2) List projects",
-      "3) Select a project"
+      "3) Select a project",
+      "4) Update projects details",
+      "5) Delete a project"
       );
   // @formatter:on
 
@@ -48,6 +50,12 @@ public class ProjectsApp { // Menu Driven Application to Insert (Create) new Pro
           case 3:
             selectProject();
             break;
+          case 4:
+            updateProjectDetails();
+            break;
+          case 5:
+            deleteProject();
+            break;
 
           default:
             System.out.println(
@@ -56,10 +64,91 @@ public class ProjectsApp { // Menu Driven Application to Insert (Create) new Pro
 
       } catch (Exception e) {
         System.out.println("\nError: " + e + " Try again."); // exception value
+        //e.printStackTrace();
       }
     }
 
   }
+
+  private void deleteProject() {
+    listProjects();
+    
+    Integer projectId = getIntInput("Enter Id of project you wish to delete: ");
+    projectService.deleteProject(projectId);
+    
+    System.out.println("Project " + projectId + " was deleted successfully.");
+    
+    if (Objects.nonNull(curProject) && curProject.getProjectId().equals(curProject)) {
+      curProject = null;
+    }
+    
+  }
+
+
+  private void updateProjectDetails() {
+    
+    if (Objects.isNull(curProject)) { // curProject isNull, leave
+      System.out.println("\nFirst please select valid project.");
+      return;
+    }
+    Integer projectId = null; //projectDetails
+    String projectName = null;
+    BigDecimal estimatedHours= null;
+    BigDecimal actualHours= null;
+    Integer difficulty = null;
+    String notes = null;
+    
+    Boolean updating = true; // set flag to get update input
+    while (updating) {
+      
+    projectName = 
+        getStringInput("Enter the project name [Current: "
+            + curProject.getProjectName() + "]");
+    
+    estimatedHours = 
+        getDecimalInput("Enter estimated hours [Current: "
+            + curProject.getEstimatedHours() + "]");
+    
+    actualHours = 
+        getDecimalInput("Enter actual hours [Current: "
+            + curProject.getActualHours() + "]");
+           
+    difficulty =
+        getIntInput("Enter difficulty 1-5 [Current: "
+            + curProject.getDifficulty() + "]");
+
+    notes = 
+        getStringInput("Enter project notes [Current: " + curProject.getNotes() + "]");
+    
+    updating = false; // leave loop
+    break;
+    }   
+    
+    Project project = new Project();
+    
+    project.setProjectName(Objects.isNull(projectName) //setProjectName, if isNull
+        ? curProject.getProjectName() : projectName); // curProj.getPN(), else projectName
+    
+    project.setEstimatedHours(Objects.isNull(estimatedHours) //setProjectName, if isNull
+        ? curProject.getEstimatedHours() : estimatedHours);
+    
+    project.setActualHours(Objects.isNull(actualHours) //setProjectName, if isNull
+        ? curProject.getActualHours() : actualHours);
+    
+    project.setDifficulty(Objects.isNull(difficulty) //setProjectName, if isNull
+        ? curProject.getDifficulty() : difficulty);
+    
+    project.setNotes(Objects.isNull(notes) //setProjectName, if isNull
+        ? curProject.getNotes() : notes);
+    
+    projectId = curProject.getProjectId();
+    project.setProjectId(projectId);
+    
+    projectService.modifyProjectDetails(project);
+    curProject = projectService.fetchProjectById(curProject.getProjectId());
+    
+  }
+
 
   private void selectProject() {
     listProjects();

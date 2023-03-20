@@ -5,8 +5,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -160,18 +158,21 @@ public class ProjectDao extends DaoBase {
   private List<Step> fetchStepsForProject(Connection conn, Integer projectId) 
   throws SQLException {
     // @formatter:off
-    String sql = "" // sql
-        + "SELECT * FROM " + STEP_TABLE + " WHERE project_id = ?";
+    String sql = // sql
+        "SELECT * FROM " + STEP_TABLE + " WHERE project_id = ?"; // does not work with ORDER BY either
     // @formatter:on
     
-    try(PreparedStatement stmt = conn.prepareStatement(sql)) { // prepare sql
-      setParameter(stmt, 1, projectId, Integer.class);
+    try(PreparedStatement stmt = conn.prepareStatement(sql)) { // prepare sql - -
+      setParameter(stmt, 1, projectId, Integer.class); // "can not set java.lang.Integer field projects
+                                                       //  .entity.Step.stepOrder to java.lang.String"
       
       try(ResultSet rs = stmt.executeQuery()) {
         List<Step> steps = new LinkedList<>();
         
         while(rs.next()) {
-          steps.add(extract(rs, Step.class));
+          System.out.println("Step extract"); // TEST PRINT
+          steps.add(extract(rs, Step.class)); // error
+          System.out.println("POST EXTRACT");
         }
         
         return steps;
@@ -203,6 +204,73 @@ public class ProjectDao extends DaoBase {
         }
       }
     }
-  
+
+  public boolean modifyProjectDetails(Project project) {
+    // @formatter:off
+    String sql = ""
+        + "UPDATE " + PROJECT_TABLE + " SET "
+        + "project_name = ?, "
+        + "estimated_hours = ?, "
+        + "actual_hours = ?, "
+        + "difficulty = ?, "
+        + "notes = ? "
+        + "WHERE project_id = ?";
+    // @formatter:on
+    
+    try (Connection conn = DbConnection.getConnection()) { //try connection
+      startTransaction(conn); //start connection
+      
+      try(PreparedStatement stmt = conn.prepareStatement(sql)) { // prepared statement = connection.prepare
+        setParameter(stmt, 1, project.getProjectName(), String.class);
+        setParameter(stmt, 2, project.getEstimatedHours(), BigDecimal.class);
+        setParameter(stmt, 3, project.getActualHours(), BigDecimal.class);
+        setParameter(stmt, 4, project.getDifficulty(), Integer.class);
+        setParameter(stmt, 5, project.getNotes(), String.class);
+        setParameter(stmt, 6, project.getProjectId(), Integer.class);
+        
+        boolean modified = stmt.executeUpdate() == 1;
+        commitTransaction(conn);
+        
+        return modified;
+        
+      }
+      catch(Exception e) {
+        rollbackTransaction(conn);
+        throw new DbException(e);
+      }
+    }
+    catch (SQLException e) {
+      throw new DbException(e);
+    }
+  }
+
+  public boolean deleteProject(Integer projectId) {
+    // @formatter:off
+    String sql = ""
+        + "DELETE FROM " + PROJECT_TABLE
+        + " WHERE project_id = ?";
+    // @formatter:on
+    
+    try (Connection conn = DbConnection.getConnection()) {
+      startTransaction(conn);
+      
+      try(PreparedStatement stmt = conn.prepareStatement(sql)) {
+        setParameter(stmt, 1, projectId, Integer.class);
+        
+        boolean deleted = stmt.executeUpdate() == 1;
+        
+        commitTransaction(conn);
+        return deleted;
+      }
+      catch(Exception e) {
+        rollbackTransaction(conn);
+        throw new DbException(e);
+      }
+    }
+    catch(SQLException e) {
+      throw new DbException(e);
+    }
+
+  }
 
 }
