@@ -113,7 +113,7 @@ public class ProjectDao extends DaoBase {
       
       if(Objects.nonNull(project)) {
         project.getMaterials().addAll(fetchMaterialsForProject(conn, projectId));
-        //project.getSteps().addAll(fetchStepsForProject(conn, projectId));
+        project.getSteps().addAll(fetchStepsForProject(conn, projectId));
         project.getCategories().addAll(fetchCategoriesForProject(conn, projectId));
       }
         

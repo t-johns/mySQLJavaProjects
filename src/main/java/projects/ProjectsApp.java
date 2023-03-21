@@ -78,7 +78,7 @@ public class ProjectsApp { // Menu Driven Application to Insert (Create) new Pro
     
     System.out.println("Project " + projectId + " was deleted successfully.");
     
-    if (Objects.nonNull(curProject) && curProject.getProjectId().equals(curProject)) {
+    if (Objects.nonNull(curProject) && curProject.getProjectId().equals(projectId)) {
       curProject = null;
     }
     
