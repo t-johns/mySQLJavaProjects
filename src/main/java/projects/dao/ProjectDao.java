@@ -163,16 +163,13 @@ public class ProjectDao extends DaoBase {
     // @formatter:on
     
     try(PreparedStatement stmt = conn.prepareStatement(sql)) { // prepare sql - -
-      setParameter(stmt, 1, projectId, Integer.class); // "can not set java.lang.Integer field projects
-                                                       //  .entity.Step.stepOrder to java.lang.String"
+      setParameter(stmt, 1, projectId, Integer.class); 
       
       try(ResultSet rs = stmt.executeQuery()) {
         List<Step> steps = new LinkedList<>();
         
         while(rs.next()) {
-          System.out.println("Step extract"); // TEST PRINT
           steps.add(extract(rs, Step.class)); // error
-          System.out.println("POST EXTRACT");
         }
         
         return steps;

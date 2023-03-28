@@ -50,10 +50,12 @@ CREATE TABLE project_category (
 
 
 INSERT INTO project (project_name, estimated_hours, actual_hours, difficulty, notes)
-VALUES ('Hang door', 2, 1.5, 1, 'Shut that door!')
+VALUES ('Hang door', 2, 1.5, 1, 'Shut that door!');
 
-INSERT INTO material (project_id, material_name, num_required, cost) VALUES (1, 'Door hangers', 2, 30.50);
-INSERT INTO material (project_id, material_name, num_required, cost) VALUES (1, 'Screws', 4, 6.00);
+INSERT INTO material (project_id, material_name, num_required, cost) 
+VALUES (1, 'Door hangers', 2, 30.50);
+INSERT INTO material (project_id, material_name, num_required, cost)
+VALUES (1, 'Screws', 4, 6.00);
 
 INSERT INTO step (project_id, step_text, step_order) 
 VALUES(1, 'Align hangers on opening side of door.', 1);
